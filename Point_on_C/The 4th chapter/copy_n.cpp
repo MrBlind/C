@@ -1,6 +1,9 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #include<stdio.h>
 
+  /* 
+  ** Extract the specified substring from the string in src. 
+  */ 
 void copy_n(char dst[], char src[], int n)
 {
 	int src_n;
