@@ -56,24 +56,26 @@ int main()
 	char above = 9;//保存上一次的输入值，检测输入算式是否合法
 	char c;
 	char num;
+	int e;
 	c = getchar();
 	//以下是将普通中缀表达式改为后缀表达式
 	while (1)
 	{
-		if (c == '\n')
-		{
-			if (!(above != ')' || (above <= '9' && above >= '0')))
-			{
-				printf("输入算式有错，请检查后重新运行此程序！");
-				return -1;
-			}
-			while (ms->top != -1)
-			{
-				PopStack(ms, &c);
-				PushStack(msn, c);
-			}
-			break;
-		}
+		e = 0;
+		//if (c == '\n')
+		//{
+			//if (!(above != ')' || (above <= '9' && above >= '0')))
+			//{
+			//	printf("输入算式有错，请检查后重新运行此程序！");
+			//	return -1;
+			//}
+			//while (ms->top != -1)
+			//{
+			//	PopStack(ms, &c);
+			//	PushStack(msn, c);
+			//}
+			//break;
+		//}
 		if (c <= '9' && c >= '0')
 		{
 			if (ms->top != -1)
@@ -84,7 +86,13 @@ int main()
 					return -1;
 				}
 			}
-			PushStack(msn, c);
+			while (c <= '9' && c >= '0')
+			{
+				e = e * 10 + c - '0';
+				above = c;
+				c = getchar();
+			}
+			PushStack(msn, (char)(e + '0'));
 		}
 		if (c == '+' || c == '-' || c == '*' || c == '/')
 		{
@@ -135,7 +143,8 @@ int main()
 			}
 		}
 		above = c;
-		c = getchar();
+		if (c == '\n')break;
+		else c = getchar();
 	}
 	while (msn->top != -1)
 	{
@@ -156,7 +165,7 @@ int main()
 	//以下是计算部分
 	while (ms->top != -1)
 	{
-		if (ms->data[ms->top] <= '9' && ms->data[ms->top] >= '0')
+		if (ms->data[ms->top] <= '0' + 255 && ms->data[ms->top] >= '0')//原本数据范围是'0'-'9'，如果要计算10以外则需要加大为'0'-'0'+255
 		{
 			PopStack(ms, &c);
 			PushStack(msn, c);
