@@ -53,7 +53,7 @@ int main()
 	MStack *msn;
 	msn = InitStack();
 	ms = InitStack();
-	int e = 1;
+	char above;//保存上一次的输入值，检测输入算式是否合法
 	char c;
 	char num;
 	c = getchar();
@@ -62,6 +62,11 @@ int main()
 	{
 		if (c == '\n')
 		{
+		    if( above != ')' && (above >= '9' || above <= '0') )
+            {
+                printf("输入算式有错，请检查后重新运行此程序！");
+                return -1;
+            }
 			while (ms->top != -1)
 			{
 				PopStack(ms, &c);
@@ -70,9 +75,21 @@ int main()
 			break;
 		}
 		if (c <= '9' && c >= '0')
+        {
+            if(above != '+' || above != '-' ||above != '*' ||above != '/')
+            {
+                printf("输入算式有错，请检查后重新运行此程序！");
+                return -1;
+            }
 			PushStack(msn, c);
+        }
 		if (c == '+' || c == '-' || c == '*' || c == '/')
 		{
+		    if(above != ')' &&(above >= '9' ||above <= '0'))
+            {
+                printf("输入算式有错，请检查后重新运行此程序！");
+                return -1;
+            }
 			if (ms->top == -1)
 				PushStack(ms, c);
 			else if (PriCal(ms->data[ms->top]) >= PriCal(c))
@@ -90,24 +107,37 @@ int main()
 		}
 		if (c == '(' || c == ')')
 		{
-			if (c == '(')PushStack(ms, c);
+			if (c == '(')
+            {
+                if(above != '+' &&above != '-' &&above != '*' &&above != '/')
+                {
+                    printf("输入算式有错，请检查后重新运行此程序！");
+                    return -1;
+                }
+                PushStack(ms, c);
+            }
 			if (c == ')')
 			{
+			    if(above <= '0' ||above >= '9')
+                {
+                    printf("输入算式有错，请检查后重新运行此程序！");
+                    return -1;
+                }
 				while (c != '(')
 				{
 					PopStack(ms, &c);
-					if(c != '(')
+					if (c != '(')
 						PushStack(msn, c);
 				}
 			}
 		}
+		above = c;
 		c = getchar();
 	}
-	//以上成功实现在输入没有错误的情况下将中缀表达式转换成后缀表达式
 	while (msn->top != -1)
 	{
 		PopStack(msn, &c);
-		printf("%c", c);
+		PushStack(ms, c);
 	}
 	/*PushStack(ms, '+');
 	PushStack(ms, '/');
@@ -119,48 +149,48 @@ int main()
 	PushStack(ms, '-');
 	PushStack(ms, '1');
 	PushStack(ms, '3');
-	PushStack(ms, '9');
+	PushStack(ms, '9');*/
 	//以下是计算部分
 	while (ms->top != -1)
 	{
-	if (ms->data[ms->top] <= '9' && ms->data[ms->top] >= '0')
-	{
-	PopStack(ms, &c);
-	PushStack(msn, c);
+		if (ms->data[ms->top] <= '9' && ms->data[ms->top] >= '0')
+		{
+			PopStack(ms, &c);
+			PushStack(msn, c);
+		}
+		if (ms->data[ms->top] == '+')
+		{
+			PopStack(ms, &c);
+			PopStack(msn, &c);
+			PopStack(msn, &num);
+			num = (int)(num - '0') + (int)(c - '0') + '0';
+			PushStack(msn, num);
+		}
+		if (ms->data[ms->top] == '-')
+		{
+			PopStack(ms, &c);
+			PopStack(msn, &c);
+			PopStack(msn, &num);
+			num = (int)(num - '0') - (int)(c - '0') + '0';
+			PushStack(msn, num);
+		}
+		if (ms->data[ms->top] == '/')
+		{
+			PopStack(ms, &c);
+			PopStack(msn, &c);
+			PopStack(msn, &num);
+			num = (char)(int)(num - '0') / (int)(c - '0') + '0';
+			PushStack(msn, num);
+		}
+		if (ms->data[ms->top] == '*')
+		{
+			PopStack(ms, &c);
+			PopStack(msn, &c);
+			PopStack(msn, &num);
+			num = (int)(c - '0')*(int)(num - '0') + '0';
+			PushStack(msn, num);
+		}
 	}
-	if (ms->data[ms->top] == '+')
-	{
-	PopStack(ms,&c);
-	PopStack(msn, &c);
-	PopStack(msn, &num);
-	num = (int)(num - '0') + (int)(c - '0') + '0';
-	PushStack(msn, num);
-	}
-	if (ms->data[ms->top] == '-')
-	{
-	PopStack(ms,&c);
-	PopStack(msn, &c);
-	PopStack(msn, &num);
-	num = (int)(num - '0') - (int)(c - '0') + '0';
-	PushStack(msn, num);
-	}
-	if (ms->data[ms->top] == '/')
-	{
-	PopStack(ms,&c);
-	PopStack(msn, &c);
-	PopStack(msn, &num);
-	num = (char)(int)(num - '0') / (int)(c - '0') + '0';
-	PushStack(msn, num);
-	}
-	if (ms->data[ms->top] == '*')
-	{
-	PopStack(ms,&c);
-	PopStack(msn, &c);
-	PopStack(msn, &num);
-	num = (int)(c - '0')*(int)(num - '0') + '0';
-	PushStack(msn, num);
-	}
-	}
-	printf("%d", msn->data[msn->top] - '0');*/
+	printf("%d", msn->data[msn->top] - '0');
 	return 0;
 }
