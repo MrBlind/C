@@ -53,7 +53,7 @@ int main()
 	MStack *msn;
 	msn = InitStack();
 	ms = InitStack();
-	char above;//保存上一次的输入值，检测输入算式是否合法
+	char above = 9;//保存上一次的输入值，检测输入算式是否合法
 	char c;
 	char num;
 	c = getchar();
@@ -62,11 +62,11 @@ int main()
 	{
 		if (c == '\n')
 		{
-		    if( above != ')' && (above >= '9' || above <= '0') )
-            {
-                printf("输入算式有错，请检查后重新运行此程序！");
-                return -1;
-            }
+			if (!(above != ')' || (above <= '9' && above >= '0')))
+			{
+				printf("输入算式有错，请检查后重新运行此程序！");
+				return -1;
+			}
 			while (ms->top != -1)
 			{
 				PopStack(ms, &c);
@@ -75,21 +75,24 @@ int main()
 			break;
 		}
 		if (c <= '9' && c >= '0')
-        {
-            if(above != '+' || above != '-' ||above != '*' ||above != '/')
-            {
-                printf("输入算式有错，请检查后重新运行此程序！");
-                return -1;
-            }
+		{
+			if (ms->top != -1)
+			{
+				if (above != '+' && above != '-' && above != '*' && above != '/' && above != '(')
+				{
+					printf("输入算式有错，请检查后重新运行此程序！");
+					return -1;
+				}
+			}
 			PushStack(msn, c);
-        }
+		}
 		if (c == '+' || c == '-' || c == '*' || c == '/')
 		{
-		    if(above != ')' &&(above >= '9' ||above <= '0'))
-            {
-                printf("输入算式有错，请检查后重新运行此程序！");
-                return -1;
-            }
+			if (!(above != ')' || (above <= '9' && above >= '0')))
+			{
+				printf("输入算式有错，请检查后重新运行此程序！");
+				return -1;
+			}
 			if (ms->top == -1)
 				PushStack(ms, c);
 			else if (PriCal(ms->data[ms->top]) >= PriCal(c))
@@ -108,21 +111,21 @@ int main()
 		if (c == '(' || c == ')')
 		{
 			if (c == '(')
-            {
-                if(above != '+' &&above != '-' &&above != '*' &&above != '/')
-                {
-                    printf("输入算式有错，请检查后重新运行此程序！");
-                    return -1;
-                }
-                PushStack(ms, c);
-            }
+			{
+				if (above != '+' &&above != '-' &&above != '*' &&above != '/'&&ms->top != -1)
+				{
+					printf("输入算式有错，请检查后重新运行此程序！");
+					return -1;
+				}
+				PushStack(ms, c);
+			}
 			if (c == ')')
 			{
-			    if(above <= '0' ||above >= '9')
-                {
-                    printf("输入算式有错，请检查后重新运行此程序！");
-                    return -1;
-                }
+				if (above < '0' || above > '9')
+				{
+					printf("输入算式有错，请检查后重新运行此程序！");
+					return -1;
+				}
 				while (c != '(')
 				{
 					PopStack(ms, &c);
