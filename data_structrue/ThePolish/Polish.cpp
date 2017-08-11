@@ -79,6 +79,7 @@ int main()
 			{
 				while (PriCal(ms->data[ms->top]) >= PriCal(c))
 				{
+					if (ms->data[ms->top] == '(')break;
 					num = c;
 					PopStack(ms, &num);
 					PushStack(msn, num);
@@ -87,9 +88,27 @@ int main()
 			}
 			else PushStack(ms, c);
 		}
+		if (c == '(' || c == ')')
+		{
+			if (c == '(')PushStack(ms, c);
+			if (c == ')')
+			{
+				while (c != '(')
+				{
+					PopStack(ms, &c);
+					if(c != '(')
+						PushStack(msn, c);
+				}
+			}
+		}
 		c = getchar();
 	}
-
+	//以上成功实现在输入没有错误的情况下将中缀表达式转换成后缀表达式
+	while (msn->top != -1)
+	{
+		PopStack(msn, &c);
+		printf("%c", c);
+	}
 	/*PushStack(ms, '+');
 	PushStack(ms, '/');
 	PushStack(ms, '2');
