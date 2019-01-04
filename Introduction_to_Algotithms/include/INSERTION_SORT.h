@@ -8,6 +8,7 @@ typedef struct _Array {
 	int arr[100];
 }Array;
 
+
 int insertion_sort(Array * test);
 
 #endif
